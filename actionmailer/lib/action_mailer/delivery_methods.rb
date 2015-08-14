@@ -64,7 +64,9 @@ module ActionMailer
           raise "Delivery method cannot be nil"
         when Symbol
           if klass = delivery_methods[method]
-            mail.delivery_method(klass, (send(:"#{method}_settings") || {}).merge(options || {}))
+	    # Patch by TN 2015.08.10 to avoid error with devise:
+	    # "undefined method `merge' for #<RailsConfig::Options..."
+            mail.delivery_method(klass, (send(:"#{method}_settings") || {}).merge!(options || {}))
           else
             raise "Invalid delivery method #{method.inspect}"
           end
